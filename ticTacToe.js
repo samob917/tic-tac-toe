@@ -42,14 +42,13 @@ function Gameboard() {
     function checkDiagonals(player) {
         let diag1 = [gameboard[0][0], gameboard[1][1], gameboard[2][2]];
         let diag2 = [gameboard[0][2], gameboard[1][1], gameboard[2][0]];
-        checkArray(diag1);
-        checkArray(diag2)
+        checkArray(player, diag1);
+        checkArray(player, diag2);
     }
 
     function checkBoard(players) {
-        for (player in players) {
+        for (const player of players) {
             checkColumns(player);
-            console.log()
             checkRows(player);
             checkDiagonals(player);
             if (gameOver) {
@@ -60,18 +59,42 @@ function Gameboard() {
     return {
         makeMove,
         checkBoard,
-        gameOver
+        gameOver,
     }
 }
 
-function User(name, marker) {
-    this.name = name;
-    this.marker = marker;
+function createUser(name, marker) {
+    return {name, marker};
 }
 
-let player1 = new User("p1", "X")
-let player2 = new User("p2", "O")
-let game = new Gameboard();
+const Game = (function () {
+    const gameboard = new Gameboard()
+    const p1Name = prompt("Player 1 Name: ");
+    const p1Symbol = prompt("Player 1 Symbol: ");
+    const p2Name = prompt("Player 2 Name: ");
+    const p2Symbol = prompt("Player 2 Symbol: ");
+    let player1 = createUser(p1Name, p1Symbol);
+    let player2 = createUser(p2Name, p2Symbol);
+    let players = [player1, player2];
+    let turn = 0
+    while (!gameboard.gameOver) {
+        if (turn===0) {
+            console.log(`${player1.name}, your move`)
+            let moveString = prompt("Row, Column");
+            let moveArr = moveString.split(",")
+            gameboard.makeMove(player1, Number(moveArr[0]), Number(moveArr[1]));
+            gameboard.checkBoard(players);
+            turn++;
+        } else {
+            console.log(`${player2.name}, your move`)
+            let moveString = prompt("Row, Column");
+            let moveArr = moveString.split(",")
+            gameboard.makeMove(player2, Number(moveArr[0]), Number(moveArr[1]));
+            gameboard.checkBoard(players);
+            turn = 0;
+        }
+    }
+    const winner = gameboard.checkBoard(players);
+    console.log(`Congratulations, ${winner}`);
+})()
 
-game.makeMove(player1, 0, 0);
-console.log(game.gameboard);
