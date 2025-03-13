@@ -8,13 +8,16 @@ function Gameboard() {
     let gameboard = [[0, 0, 0],[0, 0, 0],[0, 0, 0]];
     let gameOver = false;
     let winner = '';
+    let safeMove = true;
 
     function makeMove(player, row, col) {
         if (gameboard[row][col] === 0) {
             gameboard[row][col] = player.marker;
             console.log(gameboard);
+            safeMove = true;
         } else {
             console.log("Already Occupied!");
+            safeMove = false;
         }
     }
 
@@ -60,6 +63,7 @@ function Gameboard() {
         makeMove,
         checkBoard,
         gameOver: () => gameOver,
+        safeMove: () => safeMove,
     }
 }
 
@@ -77,20 +81,21 @@ const Game = (function () {
     let player2 = createUser(p2Name, p2Symbol);
     let players = [player1, player2];
     let turn = 0
+
+    function takeTurn(turn, player) {
+        console.log(`${player.name}, your move`)
+        let moveString = prompt(`${player.name}, Row, Column`);
+        let moveArr = moveString.split(",")
+        gameboard.makeMove(player, Number(moveArr[0]), Number(moveArr[1]));
+        gameboard.checkBoard(players);
+    }
+
     while (!gameboard.gameOver()) {
         if (turn===0) {
-            console.log(`${player1.name}, your move`)
-            let moveString = prompt("Row, Column");
-            let moveArr = moveString.split(",")
-            gameboard.makeMove(player1, Number(moveArr[0]), Number(moveArr[1]));
-            gameboard.checkBoard(players);
+            takeTurn(turn, player1);
             turn++;
         } else {
-            console.log(`${player2.name}, your move`)
-            let moveString = prompt("Row, Column");
-            let moveArr = moveString.split(",")
-            gameboard.makeMove(player2, Number(moveArr[0]), Number(moveArr[1]));
-            gameboard.checkBoard(players);
+            takeTurn(turn, player2);
             turn = 0;
         }
     }
