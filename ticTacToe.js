@@ -59,7 +59,7 @@ function Gameboard() {
     return {
         makeMove,
         checkBoard,
-        gameOver,
+        gameOver: () => gameOver,
     }
 }
 
@@ -77,7 +77,7 @@ const Game = (function () {
     let player2 = createUser(p2Name, p2Symbol);
     let players = [player1, player2];
     let turn = 0
-    while (!gameboard.gameOver) {
+    while (!gameboard.gameOver()) {
         if (turn===0) {
             console.log(`${player1.name}, your move`)
             let moveString = prompt("Row, Column");
