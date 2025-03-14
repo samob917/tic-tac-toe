@@ -88,14 +88,23 @@ const Game = (function () {
         let moveArr = moveString.split(",")
         gameboard.makeMove(player, Number(moveArr[0]), Number(moveArr[1]));
         gameboard.checkBoard(players);
+        return gameboard.safeMove()
     }
 
     while (!gameboard.gameOver()) {
         if (turn===0) {
-            takeTurn(turn, player1);
+            let safe = takeTurn(turn, player1);
+            while (!safe) {
+                alert("Invalid Move! Try again.")
+                safe = takeTurn(turn, player1)
+            }
             turn++;
         } else {
-            takeTurn(turn, player2);
+            let safe = takeTurn(turn, player2);
+            while (!safe) {
+                alert("Invalid Move! Try again.")
+                safe = takeTurn(turn, player2)
+            }
             turn = 0;
         }
     }
