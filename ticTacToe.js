@@ -71,12 +71,8 @@ function createUser(name, marker) {
     return {name, marker};
 }
 
-const Game = (function () {
+const Game = function (p1Name, p1Symbol, p2Name, p2Symbol) {
     const gameboard = new Gameboard()
-    const p1Name = prompt("Player 1 Name: ");
-    const p1Symbol = prompt("Player 1 Symbol: ");
-    const p2Name = prompt("Player 2 Name: ");
-    const p2Symbol = prompt("Player 2 Symbol: ");
     let player1 = createUser(p1Name, p1Symbol);
     let player2 = createUser(p2Name, p2Symbol);
     let players = [player1, player2];
@@ -110,5 +106,17 @@ const Game = (function () {
     }
     const winner = gameboard.checkBoard(players);
     console.log(`Congratulations, ${winner}`);
-})()
+}
+
+/* FORM SUBMISSION */
+const submitButton = document.querySelector(".form-submit")
+
+submitButton.addEventListener("click", () => {
+    const p1Name = document.querySelector("#p1").value;
+    const p1Symbol = document.querySelector("#p1-symbol").value;
+    const p2Name = document.querySelector("#p2").value;
+    const p2Symbol = document.querySelector("#p2-symbol").checked;
+    const Game = new Game(p1Name, p1Symbol, p2Name, p2Symbol);
+    event.preventDefault();
+})
 

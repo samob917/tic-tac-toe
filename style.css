@@ -28,3 +28,16 @@ form div {
     display: flex;
     flex-direction: column;
 }
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 20vw);
+    grid-template-rows: repeat(3, 28vh);
+    background-color: gray;
+    gap: 10px;
+    justify-content: center;
+}
+
+.board div {
+    background-color: aliceblue;
+}
