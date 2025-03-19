@@ -71,12 +71,13 @@ function createUser(name, marker) {
     return {name, marker};
 }
 
-const Game = function (p1Name, p1Symbol, p2Name, p2Symbol) {
+function newGame(p1Name, p1Symbol, p2Name, p2Symbol) {
     const gameboard = new Gameboard()
     let player1 = createUser(p1Name, p1Symbol);
     let player2 = createUser(p2Name, p2Symbol);
     let players = [player1, player2];
     let turn = 0
+    console.log(player1,player2)
 
     function takeTurn(turn, player) {
         console.log(`${player.name}, your move`)
@@ -87,25 +88,27 @@ const Game = function (p1Name, p1Symbol, p2Name, p2Symbol) {
         return gameboard.safeMove()
     }
 
-    while (!gameboard.gameOver()) {
-        if (turn===0) {
-            let safe = takeTurn(turn, player1);
-            while (!safe) {
-                alert("Invalid Move! Try again.")
-                safe = takeTurn(turn, player1)
+    const gamePlay = (function () {
+        while (!gameboard.gameOver()) {
+            if (turn===0) {
+                let safe = takeTurn(turn, player1);
+                while (!safe) {
+                    alert("Invalid Move! Try again.")
+                    safe = takeTurn(turn, player1)
+                }
+                turn++;
+            } else {
+                let safe = takeTurn(turn, player2);
+                while (!safe) {
+                    alert("Invalid Move! Try again.")
+                    safe = takeTurn(turn, player2)
+                }
+                turn = 0;
             }
-            turn++;
-        } else {
-            let safe = takeTurn(turn, player2);
-            while (!safe) {
-                alert("Invalid Move! Try again.")
-                safe = takeTurn(turn, player2)
-            }
-            turn = 0;
         }
-    }
-    const winner = gameboard.checkBoard(players);
-    console.log(`Congratulations, ${winner}`);
+        const winner = gameboard.checkBoard(players);
+        console.log(`Congratulations, ${winner}`);
+    })()
 }
 
 /* FORM SUBMISSION */
@@ -115,8 +118,8 @@ submitButton.addEventListener("click", () => {
     const p1Name = document.querySelector("#p1").value;
     const p1Symbol = document.querySelector("#p1-symbol").value;
     const p2Name = document.querySelector("#p2").value;
-    const p2Symbol = document.querySelector("#p2-symbol").checked;
-    const Game = new Game(p1Name, p1Symbol, p2Name, p2Symbol);
+    const p2Symbol = document.querySelector("#p2-symbol").value;
+    const game = new newGame(p1Name, p1Symbol, p2Name, p2Symbol);
     event.preventDefault();
 })
 
