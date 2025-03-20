@@ -14,6 +14,10 @@ function Gameboard() {
         if (gameboard[row][col] === 0) {
             gameboard[row][col] = player.marker;
             console.log(gameboard);
+            const squareClass = `._${row}_${col}`
+            const square = document.querySelector(squareClass);
+            console.log(square);
+            square.textContent = player.marker;
             safeMove = true;
         } else {
             console.log("Already Occupied!");
