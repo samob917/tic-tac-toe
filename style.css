@@ -24,3 +24,9 @@ time, mark, audio, video {
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
 }
+
+.newGame {
+    padding: 15px;
+    width: 200px;
+    overflow-wrap: anywhere;
+}

@@ -168,15 +168,23 @@ function GameController(
         playRound,
         getActivePlayer,
         getBoard: board.getBoard,
-        over: () => over
+        over: () => over,
+        tie: () => tie
     };
 }
 
 
 function screenController() {
-    const game = GameController();
+    let game = GameController();
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const containerDiv = document.querySelector(".container")
+
+    const newGame = (e) => {
+        game = GameController();
+        updateScreen()
+        containerDiv.removeChild(e.target)
+    }
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -187,19 +195,26 @@ function screenController() {
             playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
         }
         else {
-            playerTurnDiv.textContent = `${activePlayer.name} Wins!`;
+            game.tie() ? playerTurnDiv.textContent = `Tie` : playerTurnDiv.textContent = `${activePlayer.name} Wins!`;
         }
         
-
         for (let i = 0; i<board.length; i++) {
             for (let j=0; j<board[i].length; j++) {
                 const cellButton = document.createElement("button");
                 cellButton.classList.add("cell");
                 cellButton.dataset.row = i;
                 cellButton.dataset.col = j;
-                cellButton.textContent = board[i][j].getValue()
+                cellButton.textContent = board[i][j].getValue() === 0 ? "" : board[i][j].getValue()
                 boardDiv.appendChild(cellButton);
             }
+        }
+
+        if (game.over()) {
+            const newGameButton = document.createElement("button");
+            newGameButton.classList.add("newGame");
+            newGameButton.addEventListener("click", newGame)
+            newGameButton.textContent = 'Start a New Game'
+            containerDiv.appendChild(newGameButton);
         }
     }
     function handleClick(e) {
