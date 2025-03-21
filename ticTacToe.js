@@ -127,3 +127,13 @@ submitButton.addEventListener("click", () => {
     event.preventDefault();
 })
 
+/* Clicking on the board */
+function handleSpotClick(e) {
+    const spotClass =  e.target.className;
+    let spotInd = spotClass.split("_");
+    console.log(spotInd.slice(1,3));
+}
+const boardDiv = document.querySelector(".board");
+const spots = boardDiv.querySelectorAll("div");
+spots.forEach(spot => spot.addEventListener("click", handleSpotClick))
+
