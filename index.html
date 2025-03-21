@@ -7,32 +7,9 @@
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <h1>Let's Play Tic-Tac-Toe!</h1>
-    <form action="">
-        <div>
-            <label for="p1">Player 1 Name</label>
-            <input type="text" name="p1" id="p1" required>
-            <label for="p1-symbol">Player 1 Symbol</label>
-            <input type="text" name="p1-symbol" id="p1-symbol" required>
-        </div>
-        <div>
-            <label for="p2">Player 2 Name</label>
-            <input type="text" name="p2" id="p2" required>
-            <label for="p2-symbol">Player 2 Symbol</label>
-            <input type="text" name="p2-symbol" id="p2-symbol" required>
-        </div>
-        <button class="form-submit">Start Game</button>
-    </form>
-    <div class="board">
-        <div class="_0_0"></div>
-        <div class="_0_1"></div>
-        <div class="_0_2"></div>
-        <div class="_1_0"></div>
-        <div class="_1_1"></div>
-        <div class="_1_2"></div>
-        <div class="_2_0"></div>
-        <div class="_2_1"></div>
-        <div class="_2_2"></div>
+    <div class="container">
+        <h1 class="turn"></h1>
+        <div class="board"></div>
     </div>
     <script src="ticTacToe.js"></script>
 </body>

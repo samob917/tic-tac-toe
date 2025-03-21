@@ -163,8 +163,46 @@ function GameController(
 
     return {
         playRound,
-        getActivePlayer
+        getActivePlayer,
+        getBoard: board.getBoard
     };
 }
 
-const game = GameController();
+
+function screenController() {
+    const game = GameController();
+    const playerTurnDiv = document.querySelector(".turn");
+    const boardDiv = document.querySelector(".board");
+
+    const updateScreen = () => {
+        boardDiv.textContent = "";
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+        for (let i = 0; i<board.length; i++) {
+            for (let j=0; j<board[i].length; j++) {
+                const cellButton = document.createElement("button");
+                cellButton.classList.add("cell");
+                cellButton.dataset.row = i;
+                cellButton.dataset.col = j;
+                cellButton.textContent = board[i][j].getValue()
+                boardDiv.appendChild(cellButton);
+            }
+        }
+    }
+    function handleClick(e) {
+        const selectedRow = e.target.dataset.row;
+        const selectedCol = e.target.dataset.col;
+        if (!selectedRow) return;
+
+        game.playRound(selectedRow, selectedCol);
+        updateScreen();
+    }
+    boardDiv.addEventListener("click", handleClick);
+
+    updateScreen();
+}
+
+screenController();
