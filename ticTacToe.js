@@ -150,6 +150,7 @@ function GameController(
                 return 
             } else {
                 console.log((`${getActivePlayer().name} Wins!`));
+                getActivePlayer().score++
                 over = true;
                 return
             }
@@ -175,6 +176,13 @@ function GameController(
         return board.getBoard();
     }
 
+    const getPlayersScores = () => {
+        return [players[0].score, players[1].score];
+    }
+    const getPlayersNames = () => {
+        return [players[0].name, players[1].name];
+    }
+
     printNewRound(); // Initialize Game
 
     return {
@@ -184,6 +192,8 @@ function GameController(
         over: () => over,
         tie: () => tie,
         newGame,
+        getPlayersScores,
+        getPlayersNames
     };
 }
 
@@ -192,7 +202,8 @@ function screenController() {
     const game = GameController();
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
-    const containerDiv = document.querySelector(".container")
+    const containerDiv = document.querySelector(".container");
+    const scoreboardDiv =document.querySelector(".scoreboard");
 
     const newGame = (e) => {
         game.newGame();
@@ -201,6 +212,7 @@ function screenController() {
     }
 
     const updateScreen = () => {
+        scoreboardDiv.textContent = `${game.getPlayersNames()[0]}: ${game.getPlayersScores()[0]} \n ${game.getPlayersNames()[1]}: ${game.getPlayersScores()[1]}`
         boardDiv.textContent = "";
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
