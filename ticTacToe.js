@@ -32,7 +32,7 @@ function Gameboard() {
             board[row][col].setValue(value);
             return 1
         } else {
-            return 0// Exit this function if invalid move
+            return 0 // If invalid move, return 0
         }
     }
 
@@ -68,6 +68,7 @@ function GameController(
     playerTwoName = "Player Two"
 ) {
     const board = Gameboard();
+    let tie = false;
 
     const players = [
         {
@@ -93,13 +94,62 @@ function GameController(
         console.log(`${getActivePlayer().name}'s Turn.`)
     }
 
+    /* 
+    To check if the game is over, check if any rows all have the same symbol,
+    then check columns, then the two diagonals, then check if any valid moves are left.
+    If no valid moves, declare tie, otherwise declare winner
+    */
+    const checkGameOver = () => {
+        const boardToCheck = board.getBoard().map((row) => row.map((cell) => cell.getValue()));
+        const checkValue = getActivePlayer().value;
+        // Rows
+        for (let i = 0; i < boardToCheck.length; i++) {
+            if (boardToCheck[i].every( (col) => col === checkValue)) {
+                return true
+            }
+        }
+        // Columns
+        for (let j = 0; j < boardToCheck.length; j++) {
+            let colArr = [boardToCheck[0][j], boardToCheck[1][j], boardToCheck[2][j]];
+            if (colArr.every( (row) => row === checkValue)) {
+                return true
+            }
+        }
+        // Diags
+        let diagArr1 = [boardToCheck[0][0], boardToCheck[1][1], boardToCheck[2][2]];
+        let diagArr2 = [boardToCheck[0][2], boardToCheck[1][1], boardToCheck[0][2]];
+        if (diagArr1.every( (elem) => elem === checkValue)) {
+            return true
+        }
+        if (diagArr2.every( (elem) => elem === checkValue)) {
+            return true
+        }
+        // Any Valid Moves?
+        function containsZero(arr) {
+            return arr.includes(0)
+        }
+        if (boardToCheck.filter(containsZero).length === 0) {
+            tie = true;
+            return true
+        }
+    }
+
     const playRound = (row, col) => {
         console.log(`${getActivePlayer().name} moved to column ${col},
         row ${row}.`);
         let valid = board.makeMove(row, col, getActivePlayer().value);
 
         /* Check if game is over */
-        
+        if(checkGameOver()) {
+            if (tie) {
+                console.log("Tie!");
+                return 
+            } else {
+                console.log((`${getActivePlayer().name} Wins!`));
+                return
+            }
+        }
+
         // if move is invalid dont switch active player have board.makeMove return validity
         if (valid === 1) {
             switchActivePlayer();
