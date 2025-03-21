@@ -67,18 +67,20 @@ function GameController(
     playerOneName= "Player One",
     playerTwoName = "Player Two"
 ) {
-    const board = Gameboard();
+    let board = Gameboard();
     let tie = false;
     let over = false;
 
     const players = [
         {
             name: playerOneName,
-            value: "X"
+            value: "X",
+            score: 0
         },
         {
             name:playerTwoName,
-            value: "O"
+            value: "O",
+            score: 0
         }
     ];
 
@@ -118,7 +120,7 @@ function GameController(
         }
         // Diags
         let diagArr1 = [boardToCheck[0][0], boardToCheck[1][1], boardToCheck[2][2]];
-        let diagArr2 = [boardToCheck[0][2], boardToCheck[1][1], boardToCheck[0][2]];
+        let diagArr2 = [boardToCheck[0][2], boardToCheck[1][1], boardToCheck[2][0]];
         if (diagArr1.every( (elem) => elem === checkValue)) {
             return true
         }
@@ -162,28 +164,40 @@ function GameController(
         printNewRound();
     }
 
+    const newGame = () => {
+        board = Gameboard();
+        tie = false;
+        over = false;
+        printNewRound()
+    }
+
+    const getBoard = () => {
+        return board.getBoard();
+    }
+
     printNewRound(); // Initialize Game
 
     return {
         playRound,
         getActivePlayer,
-        getBoard: board.getBoard,
+        getBoard,
         over: () => over,
-        tie: () => tie
+        tie: () => tie,
+        newGame,
     };
 }
 
 
 function screenController() {
-    let game = GameController();
+    const game = GameController();
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const containerDiv = document.querySelector(".container")
 
     const newGame = (e) => {
-        game = GameController();
-        updateScreen()
-        containerDiv.removeChild(e.target)
+        game.newGame();
+        updateScreen();
+        containerDiv.removeChild(e.target);
     }
 
     const updateScreen = () => {
