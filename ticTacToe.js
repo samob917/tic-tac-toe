@@ -1,139 +1,120 @@
 /* 
-Thoughts:
-Create a gameboard object that has 9 squares
-have a Game factory which starts a game. It creates a game board
+Following the *Building a House from Inside Out* Guide, the way this will
+work is I will create a Gameboard object that maintains the state of the 
+gameboard, the way to make a move, and a way to display the board.
+Each cell of the board will be held in a Cell object which has two 
+mehtods, essentially a getter and setter method, one is set Cell value
+the other is get Cell value. 
+
+I will then have a game controller object that plays the game, i.e. says
+who's turn it is and makes a move and checks if the game is over.
+
+After this is complete, I will add a screen controller object that allows
+interaction from the DOM.
 */
 
 function Gameboard() {
-    let gameboard = [[0, 0, 0],[0, 0, 0],[0, 0, 0]];
-    let gameOver = false;
-    let winner = '';
-    let safeMove = true;
+    const rows = 3;
+    const columns = 3;
+    const board = [];
 
-    function makeMove(player, row, col) {
-        if (gameboard[row][col] === 0) {
-            gameboard[row][col] = player.marker;
-            console.log(gameboard);
-            const squareClass = `._${row}_${col}`
-            const square = document.querySelector(squareClass);
-            console.log(square);
-            square.textContent = player.marker;
-            safeMove = true;
+    for (let i=0; i<rows; i++) {
+        board[i] = [];
+        for (let j=0; j<columns; j++) {
+            board[i].push(Cell());
+        }
+    }
+
+    const getBoard = () => board;
+
+    const makeMove = (row, col, value) => {
+        if (board[row][col].getValue() === 0) {
+            board[row][col].setValue(value);
+            return 1
         } else {
-            console.log("Already Occupied!");
-            safeMove = false;
+            return 0// Exit this function if invalid move
         }
     }
 
-    function checkArray(player, arr) {
-        if (arr.every(b => b === player.marker)) {
-            console.log(`${player.name} wins!`);
-            gameOver = true;
-            winner = player.name;
-        }
-    }
-    function checkRows(player) {
-        for (let i = 0; i<3; i++) {
-            let arr = gameboard[i];
-            checkArray(player, arr);
-        }
-    }   
-
-    function checkColumns(player) {
-        for (let i = 0; i < 3; i++) {
-            let arr = [gameboard[0][i], gameboard[1][i], gameboard[2][i]];
-            checkArray(player, arr)
-        }
+    const printBoard = () => {
+        const boardWithValues = board.map((row) => row.map((cell) => cell.getValue()));
+        console.log(boardWithValues);
     }
 
-    function checkDiagonals(player) {
-        let diag1 = [gameboard[0][0], gameboard[1][1], gameboard[2][2]];
-        let diag2 = [gameboard[0][2], gameboard[1][1], gameboard[2][0]];
-        checkArray(player, diag1);
-        checkArray(player, diag2);
-    }
-
-    function checkBoard(players) {
-        for (const player of players) {
-            checkColumns(player);
-            checkRows(player);
-            checkDiagonals(player);
-            if (gameOver) {
-                return winner
-            }
-        }
-    }
     return {
+        getBoard,
         makeMove,
-        checkBoard,
-        gameOver: () => gameOver,
-        safeMove: () => safeMove,
+        printBoard
     }
 }
 
-function createUser(name, marker) {
-    return {name, marker};
-}
+function Cell() {
+    let value = 0;
 
-function newGame(p1Name, p1Symbol, p2Name, p2Symbol) {
-    const gameboard = new Gameboard()
-    let player1 = createUser(p1Name, p1Symbol);
-    let player2 = createUser(p2Name, p2Symbol);
-    let players = [player1, player2];
-    let turn = 0
-    console.log(player1,player2)
-
-    function takeTurn(turn, player) {
-        console.log(`${player.name}, your move`)
-        let moveString = prompt(`${player.name}, Row, Column`);
-        let moveArr = moveString.split(",")
-        gameboard.makeMove(player, Number(moveArr[0]), Number(moveArr[1]));
-        gameboard.checkBoard(players);
-        return gameboard.safeMove()
+    const setValue = (symbol) => {
+        value = symbol;
     }
 
-    const gamePlay = (function () {
-        while (!gameboard.gameOver()) {
-            if (turn===0) {
-                let safe = takeTurn(turn, player1);
-                while (!safe) {
-                    alert("Invalid Move! Try again.")
-                    safe = takeTurn(turn, player1)
-                }
-                turn++;
-            } else {
-                let safe = takeTurn(turn, player2);
-                while (!safe) {
-                    alert("Invalid Move! Try again.")
-                    safe = takeTurn(turn, player2)
-                }
-                turn = 0;
-            }
+    const getValue = () => value;
+
+    return {
+        setValue,
+        getValue
+    };
+}
+
+function GameController(
+    playerOneName= "Player One",
+    playerTwoName = "Player Two"
+) {
+    const board = Gameboard();
+
+    const players = [
+        {
+            name: playerOneName,
+            value: "X"
+        },
+        {
+            name:playerTwoName,
+            value: "O"
         }
-        const winner = gameboard.checkBoard(players);
-        console.log(`Congratulations, ${winner}`);
-    })()
+    ];
+
+    let activePlayer = players[0];
+
+    const switchActivePlayer = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log(`${getActivePlayer().name}'s Turn.`)
+    }
+
+    const playRound = (row, col) => {
+        console.log(`${getActivePlayer().name} moved to column ${col},
+        row ${row}.`);
+        let valid = board.makeMove(row, col, getActivePlayer().value);
+
+        /* Check if game is over */
+        
+        // if move is invalid dont switch active player have board.makeMove return validity
+        if (valid === 1) {
+            switchActivePlayer();
+        } else {
+            console.log("Invalid move. Try again.")
+        }
+        printNewRound();
+    }
+
+    printNewRound(); // Initialize Game
+
+    return {
+        playRound,
+        getActivePlayer
+    };
 }
 
-/* FORM SUBMISSION */
-const submitButton = document.querySelector(".form-submit")
-
-submitButton.addEventListener("click", () => {
-    const p1Name = document.querySelector("#p1").value;
-    const p1Symbol = document.querySelector("#p1-symbol").value;
-    const p2Name = document.querySelector("#p2").value;
-    const p2Symbol = document.querySelector("#p2-symbol").value;
-    const game = new newGame(p1Name, p1Symbol, p2Name, p2Symbol);
-    event.preventDefault();
-})
-
-/* Clicking on the board */
-function handleSpotClick(e) {
-    const spotClass =  e.target.className;
-    let spotInd = spotClass.split("_");
-    console.log(spotInd.slice(1,3));
-}
-const boardDiv = document.querySelector(".board");
-const spots = boardDiv.querySelectorAll("div");
-spots.forEach(spot => spot.addEventListener("click", handleSpotClick))
-
+const game = GameController();
