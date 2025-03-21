@@ -69,6 +69,7 @@ function GameController(
 ) {
     const board = Gameboard();
     let tie = false;
+    let over = false;
 
     const players = [
         {
@@ -143,9 +144,11 @@ function GameController(
         if(checkGameOver()) {
             if (tie) {
                 console.log("Tie!");
+                over = true;
                 return 
             } else {
                 console.log((`${getActivePlayer().name} Wins!`));
+                over = true;
                 return
             }
         }
@@ -164,7 +167,8 @@ function GameController(
     return {
         playRound,
         getActivePlayer,
-        getBoard: board.getBoard
+        getBoard: board.getBoard,
+        over: () => over
     };
 }
 
@@ -179,7 +183,13 @@ function screenController() {
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
 
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+        if (!game.over()) {
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+        }
+        else {
+            playerTurnDiv.textContent = `${activePlayer.name} Wins!`;
+        }
+        
 
         for (let i = 0; i<board.length; i++) {
             for (let j=0; j<board[i].length; j++) {
@@ -196,9 +206,10 @@ function screenController() {
         const selectedRow = e.target.dataset.row;
         const selectedCol = e.target.dataset.col;
         if (!selectedRow) return;
-
-        game.playRound(selectedRow, selectedCol);
-        updateScreen();
+        if (!game.over()) {
+            game.playRound(selectedRow, selectedCol);
+            updateScreen();
+        }
     }
     boardDiv.addEventListener("click", handleClick);
 
