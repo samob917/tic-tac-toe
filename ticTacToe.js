@@ -286,6 +286,7 @@ function fullController() {
     resetButton.classList.add("reset")
     resetButton.addEventListener("click", (e) => {
         fullController();
+        e.preventDefault();
     })
 }
 
