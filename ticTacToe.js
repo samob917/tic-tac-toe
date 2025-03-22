@@ -71,7 +71,7 @@ function GameController(
     let tie = false;
     let over = false;
 
-    const players = [
+    let players = [
         {
             name: playerOneName,
             value: "X",
@@ -83,6 +83,14 @@ function GameController(
             score: 0
         }
     ];
+
+    const setPlayerName = (ind, newName) => {
+        players[ind].name = newName;
+    };
+
+    const setPlayerMarker = (ind, newMarker) => {
+        players[ind].value = newMarker;
+    };
 
     let activePlayer = players[0];
 
@@ -193,13 +201,17 @@ function GameController(
         tie: () => tie,
         newGame,
         getPlayersScores,
-        getPlayersNames
+        getPlayersNames,
+        setPlayerName,
+        setPlayerMarker,
     };
 }
 
 
-function screenController() {
+function screenController(p1Name, p2Name) {
     const game = GameController();
+    game.setPlayerName(0, p1Name);
+    game.setPlayerName(1, p2Name);
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const containerDiv = document.querySelector(".container");
@@ -212,7 +224,7 @@ function screenController() {
     }
 
     const updateScreen = () => {
-        scoreboardDiv.textContent = `${game.getPlayersNames()[0]}: ${game.getPlayersScores()[0]} \n ${game.getPlayersNames()[1]}: ${game.getPlayersScores()[1]}`
+        scoreboardDiv.textContent = `${game.getPlayersNames()[0]}: ${game.getPlayersScores()[0]} vs. ${game.getPlayersNames()[1]}: ${game.getPlayersScores()[1]}`
         boardDiv.textContent = "";
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
@@ -257,4 +269,35 @@ function screenController() {
     updateScreen();
 }
 
-screenController();
+function fullController() {
+    const form = document.querySelector("form")
+    const startButton = document.querySelector(".start")
+    const resetButton = document.createElement("button")
+    resetButton.textContent = "Reset"
+    startButton.addEventListener("click", (e) => {
+        let p1Name = form.querySelector("#p1Name").value;
+        let p2Name = form.querySelector("#p2Name").value;
+        screenController(p1Name, p2Name);
+        form.removeChild(startButton);
+        form.appendChild(resetButton);
+        e.preventDefault();
+    });
+
+    resetButton.classList.add("reset")
+    resetButton.addEventListener("click", (e) => {
+        form.querySelector("#p1Name").value = "";
+        form.querySelector("#p2Name").value = "";
+        form.removeChild(resetButton);
+        form.appendChild(startButton);
+        document.querySelector(".scoreboard").textContent = '';
+        document.querySelector('.board').textContent = '';
+        document.querySelector('.turn').textContent = '';
+        const newGameButton = document.querySelector(".newGame");
+        if (!newGameButton === null) {
+            document.querySelector(".container").removeChild(newGameButton);
+        }
+        e.preventDefault()
+    })
+}
+
+fullController()
