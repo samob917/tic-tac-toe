@@ -285,18 +285,7 @@ function fullController() {
 
     resetButton.classList.add("reset")
     resetButton.addEventListener("click", (e) => {
-        form.querySelector("#p1Name").value = "";
-        form.querySelector("#p2Name").value = "";
-        form.removeChild(resetButton);
-        form.appendChild(startButton);
-        document.querySelector(".scoreboard").textContent = '';
-        document.querySelector('.board').textContent = '';
-        document.querySelector('.turn').textContent = '';
-        const newGameButton = document.querySelector(".newGame");
-        if (!newGameButton === null) {
-            document.querySelector(".container").removeChild(newGameButton);
-        }
-        e.preventDefault()
+        fullController();
     })
 }
 
